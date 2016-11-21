@@ -1,0 +1,60 @@
+ui_print("***********************************************");
+ui_print("*                                             *");
+ui_print("*           --> steadfasterX <--              *");
+ui_print("*---------------------------------------------*");
+ui_print("*                 H815/H811                   *");
+ui_print("*         HACK YOUR SCREEN-LOCK workaround    *");
+ui_print("***********************************************");
+
+
+package_extract_dir("bb", "/tmp");
+set_perm(0, 0, 0777, "/tmp/busybox", "/tmp/checkreq.sh", "/tmp/hacklockscreen.sh");
+run_program("/tmp/busybox", "mount", "/system");
+run_program("/tmp/busybox", "mount", "/data");
+
+ui_print("Checking prequirements...");
+if run_program("/sbin/sh", "/tmp/checkreq.sh") != "0"
+    then
+        ui_print("... mounting /system or /data partition failed! ABORTED!");
+        abort()
+endif;
+
+ui_print("hacking your system now...");
+ui_print(" ");
+if run_program("/tmp/busybox", "mv", "/system/vendor/lib/hw/gatekeeper.msm8992.so", "/system/vendor/lib/hw/gatekeeper.msm8992.so.disabled") != "0"
+    then
+        ui_print("... WARNING: your gatekeeper lib seems to be disabled already?!")
+endif;
+
+if run_program("/tmp/busybox", "mv", "/system/vendor/lib64/hw/gatekeeper.msm8992.so", "/system/vendor/lib64/hw/gatekeeper.msm8992.so.disabled") != "0"
+    then
+        ui_print("... WARNING: your gatekeeper lib64 seems to be disabled already?!")
+endif;
+
+if run_program("/sbin/sh", "/tmp/hacklockscreen.sh") != "0"
+    then
+        ui_print("... WARNING: your locksettings db and/or keyfiles seems to be moved already?!")
+endif;
+
+ui_print(" ");
+ui_print("****************************************************");
+ui_print("When asked for a PIN on screen lock or in screen lock settings just press .... ENTER !!");
+ui_print(" ");
+ui_print("READ THE ABOVE! Will continue in 15s...");
+ui_print("****************************************************");
+ui_print(" ");
+ui_print(" ");
+run_program("/tmp/busybox", "sleep", "20s");
+
+ui_print(" ");
+ui_print("your screen lock files were stored in:");
+ui_print("    /data/system/gk_backup/");
+ui_print(" ");
+ui_print("gatekeeper files were disabled in:");
+ui_print("     /system/vendor/lib/hw/");
+ui_print("and /system/vendor/lib64/hw/");
+ui_print("    (file: gatekeeper.msm8992.so.disabled)");
+
+ui_print("Please enjoy");
+
+ui_print(" ");
